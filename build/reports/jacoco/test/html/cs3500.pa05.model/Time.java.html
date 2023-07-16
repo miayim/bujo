@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Time.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.model</a> &gt; <span class="el_source">Time.java</span></div><h1>Time.java</h1><pre class="source lang-java linenums">package cs3500.pa05.model;
+
+import cs3500.pa05.model.json.TimeJson;
+
+/**
+ * class representing a Time in a day
+ */
+public final class Time {
+  private int hour;
+  private int minute;
+  private final AmPm amPm;
+
+  /**
+   * creates a time given the hours and minutes
+   *
+   * @param hour   a 12-hour representation of the hour
+   * @param minute the minute that the task is set to be on
+   * @param amPm   an enumeration of the AM or PM of the current time
+   */
+<span class="fc" id="L20">  public Time(int hour, int minute, AmPm amPm) {</span>
+<span class="fc" id="L21">    this.hour = hour;</span>
+<span class="fc" id="L22">    this.minute = minute;</span>
+<span class="fc" id="L23">    this.amPm = amPm;</span>
+<span class="fc" id="L24">  }</span>
+
+  /**
+   * Determines if the start time comes before the end time
+   *
+   * @param startTime the starting time
+   * @param endTime   the ending time
+   * @return boolean representing if the start time comes before the end time
+   */
+  public static boolean validDuration(Time startTime, Time endTime) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">    if (startTime.getAmPm().equals(AmPm.AM)) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">      if (endTime.getAmPm().equals(AmPm.PM)) {</span>
+<span class="fc" id="L36">        return true;</span>
+      } else {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (startTime.getHour() &lt; endTime.getHour()) {</span>
+<span class="fc" id="L39">          return true;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        } else if (startTime.getHour() == endTime.getHour()) {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">          return startTime.getMinute() &lt; endTime.getMinute();</span>
+        } else {
+<span class="fc" id="L43">          return false;</span>
+        }
+      }
+    } else {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">      if (endTime.getAmPm().equals(AmPm.AM)) {</span>
+<span class="fc" id="L48">        return false;</span>
+<span class="pc bpc" id="L49" title="1 of 4 branches missed.">      } else if (endTime.getHour() == 12 &amp;&amp; endTime.getAmPm().equals(AmPm.PM)) {</span>
+<span class="fc" id="L50">        return false;</span>
+      } else {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (startTime.getHour() &lt; endTime.getHour()) {</span>
+<span class="fc" id="L53">          return true;</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        } else if (startTime.getHour() == endTime.getHour()) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">          return startTime.getMinute() &lt; endTime.getMinute();</span>
+        } else {
+<span class="nc" id="L57">          return false;</span>
+        }
+      }
+    }
+  }
+
+  /**
+   * Determines the duration between the start and end time if it is valid
+   *
+   * @param startTime the starting time
+   * @param endTime   the ending time
+   * @return the duration between the two times
+   */
+  public static Time getDuration(Time startTime, Time endTime) {
+<span class="fc" id="L71">    int hours = 0;</span>
+<span class="fc" id="L72">    int minutes = 0;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    if (!validDuration(startTime, endTime)) {</span>
+<span class="fc" id="L74">      throw new IllegalArgumentException(&quot;Invalid duration&quot;);</span>
+    } else {
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">      if ((startTime.getAmPm().equals(AmPm.AM) &amp;&amp; endTime.getAmPm().equals(AmPm.AM))</span>
+<span class="pc bpc" id="L77" title="1 of 4 branches missed.">          || (startTime.getAmPm().equals(AmPm.PM) &amp;&amp; endTime.getAmPm().equals(AmPm.PM))) {</span>
+<span class="fc" id="L78">        hours = endTime.getHour() - startTime.getHour();</span>
+<span class="fc" id="L79">        minutes = Math.abs(endTime.getMinute() - startTime.getMinute());</span>
+      } else {
+<span class="fc" id="L81">        hours = (12 - startTime.getHour()) + endTime.getHour();</span>
+<span class="fc" id="L82">        minutes = Math.abs(endTime.getMinute() - startTime.getMinute());</span>
+      }
+    }
+<span class="fc" id="L85">    return new Time(hours, minutes, AmPm.PM);</span>
+  }
+
+  public TimeJson toJson() {
+<span class="fc" id="L89">    return new TimeJson(hour, minute, amPm);</span>
+  }
+
+  /**
+   * returns the amPm value of this time
+   *
+   * @return the AmPm value of this time
+   */
+  public AmPm getAmPm() {
+<span class="fc" id="L98">    return this.amPm;</span>
+  }
+
+  /**
+   * returns the string representation of the current time
+   *
+   * @return the time as a string, EX: 23:42
+   */
+  @Override
+  public String toString() {
+<span class="fc" id="L108">    String minuteString = String.valueOf(minute);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">    if (minute &lt; 10) {</span>
+<span class="fc" id="L110">      minuteString = &quot;0&quot; + minuteString;</span>
+    }
+<span class="fc" id="L112">    return hour + &quot;:&quot; + minuteString + &quot; &quot; + amPm.toString().toLowerCase();</span>
+  }
+
+  /**
+   * adds a given amount of minutes to the current time, adjusts the hours aswell
+   *
+   * @param minutes an integer representing the amount to move up by
+   */
+  public void addMinutes(int minutes) {
+<span class="fc" id="L121">    int totalMins = minutes + minute;</span>
+
+    //sets the total minutes to the proper amount
+<span class="fc" id="L124">    minute = totalMins % 60;</span>
+    //adds the proper amount of hours
+<span class="fc" id="L126">    addHour(totalMins / 60);</span>
+<span class="fc" id="L127">  }</span>
+
+  /**
+   * adds a set amount of hours to the time
+   *
+   * @param hours amount of hours to be added
+   */
+  public void addHour(int hours) {
+<span class="fc" id="L135">    hour += hours;</span>
+<span class="fc" id="L136">  }</span>
+
+  /**
+   * determines if the time is valid
+   *
+   * @return true if the hours and minutes are in their valid ranges
+   */
+  public boolean validTime() {
+<span class="fc bfc" id="L144" title="All 8 branches covered.">    return hour &gt; 0 &amp;&amp; hour &lt;= 12 &amp;&amp; minute &gt;= 0 &amp;&amp; minute &lt;= 60;</span>
+  }
+
+  /**
+   * returns the hour of the current time
+   *
+   * @return the hour of the current time
+   */
+  public int getHour() {
+<span class="fc" id="L153">    return hour;</span>
+  }
+
+  /**
+   * returns the minute of the current time
+   *
+   * @return the minute of the current time
+   */
+  public int getMinute() {
+<span class="fc" id="L162">    return minute;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

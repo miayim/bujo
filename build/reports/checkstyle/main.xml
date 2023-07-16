@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.10.0">
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/Driver.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/PasswordController.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/TaskController.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/FileWriter.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/MainController.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/EventController.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/BujoFileToModel.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/SplashController.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/WeekController.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/controller/Icontroller.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/Time.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/Event.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/json/TaskJson.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/json/WeekRecord.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/json/EventJson.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/json/TimeJson.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/AmPm.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/Task.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/model/Weekday.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/main/java/cs3500/pa05/view/BujoView.java">
+</file>
+</checkstyle>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Task.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.model</a> &gt; <span class="el_source">Task.java</span></div><h1>Task.java</h1><pre class="source lang-java linenums">package cs3500.pa05.model;
+
+
+import cs3500.pa05.model.json.TaskJson;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.geometry.Insets;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+
+/**
+ * class representing a tasks that needs to be completed within a BUJO
+ */
+public final class Task extends VBox {
+  private final String name;
+  private final String description;
+  private final Weekday weekday;
+  private final List&lt;Task&gt; cloneBuddies;
+  private boolean complete;
+  private TextFlow nameBox;
+  private TextFlow descBox;
+  private VBox innerBox;
+
+  /**
+   * Creates an incomplete tasks with a given name, description, and day
+   *
+   * @param name        Name of the tasks
+   * @param description Description of the tasks
+   * @param weekday     Weekday the tasks occurs on
+   */
+<span class="fc" id="L37">  public Task(String name, String description, Weekday weekday) {</span>
+<span class="fc" id="L38">    this.name = name;</span>
+<span class="fc" id="L39">    this.description = description;</span>
+<span class="fc" id="L40">    this.weekday = weekday;</span>
+<span class="fc" id="L41">    this.complete = false;</span>
+<span class="fc" id="L42">    this.cloneBuddies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L43">    init();</span>
+<span class="fc" id="L44">  }</span>
+
+  /**
+   * Instantiates a new Task.
+   *
+   * @param name        the name
+   * @param description the description
+   * @param weekday     the weekday
+   * @param complete    the complete
+   */
+<span class="fc" id="L54">  public Task(String name, String description, Weekday weekday, boolean complete) {</span>
+<span class="fc" id="L55">    this.name = name;</span>
+<span class="fc" id="L56">    this.description = description;</span>
+<span class="fc" id="L57">    this.weekday = weekday;</span>
+<span class="fc" id="L58">    this.complete = complete;</span>
+<span class="fc" id="L59">    this.cloneBuddies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L60">    init();</span>
+<span class="fc" id="L61">  }</span>
+
+  /**
+   * Instantiates a new Task.
+   *
+   * @param name        the name
+   * @param description the description
+   * @param weekday     the weekday
+   * @param complete    the complete
+   * @param buddy       the buddy
+   */
+<span class="fc" id="L72">  public Task(String name, String description, Weekday weekday, boolean complete, Task buddy) {</span>
+<span class="fc" id="L73">    this.name = name;</span>
+<span class="fc" id="L74">    this.description = description;</span>
+<span class="fc" id="L75">    this.weekday = weekday;</span>
+<span class="fc" id="L76">    this.complete = complete;</span>
+<span class="fc" id="L77">    this.cloneBuddies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L78">    cloneBuddies.add(buddy);</span>
+<span class="fc" id="L79">    init();</span>
+<span class="fc" id="L80">  }</span>
+
+  /**
+   * To json task json.
+   *
+   * @return the task json
+   */
+  public TaskJson toJson() {
+<span class="fc" id="L88">    return new TaskJson(name, description, weekday, complete);</span>
+  }
+
+
+  /**
+   * Method to initialize all of the elements in the vbox
+   */
+  public void init() {
+<span class="fc" id="L96">    nameBox = new TextFlow();</span>
+<span class="fc" id="L97">    descBox = new TextFlow();</span>
+<span class="fc" id="L98">    innerBox = new VBox();</span>
+
+<span class="fc" id="L100">    nameBox.getChildren().add(new Text(this.name));</span>
+<span class="fc" id="L101">    nameBox.setStyle(&quot;-fx-text-fill: black; -fx-font-size: 14px;&quot;);</span>
+<span class="fc" id="L102">    innerBox.getChildren().add(nameBox);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">    if (description != null) {</span>
+<span class="fc" id="L104">      processDesc();</span>
+<span class="fc" id="L105">      innerBox.getChildren().add(descBox);</span>
+    }
+<span class="fc" id="L107">    innerBox.setStyle(&quot;-fx-background-color: #D55F5F;&quot;);</span>
+<span class="fc" id="L108">    innerBox.setStyle(&quot;-fx-background-color: #D55F5F;&quot;);</span>
+
+<span class="fc" id="L110">    innerBox.setPrefWidth(100);</span>
+<span class="fc" id="L111">    this.setPadding(new Insets(5, 5, 5, 5));</span>
+<span class="fc" id="L112">    this.getChildren().add(innerBox);</span>
+
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">    if (complete) {</span>
+<span class="nc" id="L115">      innerBox.setStyle(&quot;-fx-background-color: #66A95B&quot;);</span>
+    }
+<span class="fc" id="L117">  }</span>
+
+  /**
+   * Process description.
+   */
+  private void processDesc() {
+<span class="fc" id="L123">    String[] words = description.split(&quot; &quot;);</span>
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">    for (String word : words) {</span>
+<span class="pc bpc" id="L126" title="2 of 4 branches missed.">      if (word.startsWith(&quot;http://&quot;) || word.startsWith(&quot;https://&quot;)) {</span>
+<span class="nc" id="L127">        Hyperlink hyperlink = new Hyperlink(word);</span>
+<span class="nc" id="L128">        hyperlink.setOnAction(event -&gt; openUrl(hyperlink.getText()));</span>
+<span class="nc" id="L129">        descBox.getChildren().add(hyperlink);</span>
+<span class="nc" id="L130">      } else {</span>
+        // Create a regular Text node for other words
+<span class="fc" id="L132">        Text text = new Text(word + &quot; &quot;);</span>
+<span class="fc" id="L133">        text.setStyle(&quot;-fx-text-fill: black; -fx-font-size: 12px;&quot;);</span>
+<span class="fc" id="L134">        descBox.getChildren().add(text);</span>
+      }
+    }
+<span class="fc" id="L137">    descBox.setMaxWidth(100);</span>
+<span class="fc" id="L138">  }</span>
+
+  /**
+   * Open url.
+   *
+   * @param url the url
+   */
+  private void openUrl(String url) {
+    try {
+<span class="nc" id="L147">      Desktop.getDesktop().browse(new URI(url));</span>
+<span class="nc" id="L148">    } catch (IOException | URISyntaxException e) {</span>
+<span class="nc" id="L149">      e.printStackTrace();</span>
+<span class="nc" id="L150">    }</span>
+<span class="nc" id="L151">  }</span>
+
+  /**
+   * returns the name of the tasks
+   *
+   * @return a String representation of the tasks's name
+   */
+  public String getName() {
+<span class="fc" id="L159">    return name;</span>
+  }
+
+  /**
+   * returns the description of the tasks
+   *
+   * @return a String representation of the tasks's description
+   */
+  public String getDescription() {
+<span class="fc" id="L168">    return description;</span>
+  }
+
+  /**
+   * returns the weekday the tasks is set to be on
+   *
+   * @return the weekday the tasks is set to be on
+   */
+  public Weekday getWeekday() {
+<span class="fc" id="L177">    return weekday;</span>
+  }
+
+  /**
+   * marks the tasks as completed if not, or not completed if it is
+   */
+  public void changeComplete() {
+
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">    complete = !complete;</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">    if (complete) {</span>
+<span class="fc" id="L187">      innerBox.setStyle(&quot;-fx-background-color: #66A95B&quot;);</span>
+    } else {
+<span class="nc" id="L189">      innerBox.setStyle(&quot;-fx-background-color: #D55F5F;&quot;);</span>
+    }
+<span class="fc bfc" id="L191" title="All 2 branches covered.">    for (Task task : cloneBuddies) {</span>
+<span class="fc" id="L192">      task.buddyComplete();</span>
+<span class="fc" id="L193">    }</span>
+<span class="fc" id="L194">  }</span>
+
+  /**
+   * Buddy complete.
+   */
+  void buddyComplete() {
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">    complete = !complete;</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">    if (complete) {</span>
+<span class="fc" id="L202">      innerBox.setStyle(&quot;-fx-background-color: #66A95B&quot;);</span>
+    } else {
+<span class="nc" id="L204">      innerBox.setStyle(&quot;-fx-background-color: #D55F5F;&quot;);</span>
+    }
+<span class="fc" id="L206">  }</span>
+
+
+  /**
+   * returns if the tasks is complete or not
+   *
+   * @return true if the tasks is marked as &quot;complete&quot;
+   */
+  public boolean isComplete() {
+<span class="fc" id="L215">    return complete;</span>
+  }
+
+  /**
+   * To string string.
+   *
+   * @return the string
+   */
+  @Override
+  public String toString() {
+<span class="fc" id="L225">    return this.name + &quot;\n&quot;</span>
+<span class="fc" id="L226">        + &quot;- &quot; + this.weekday.toString() + &quot;\n&quot;</span>
+        + &quot;- &quot; + this.description + &quot;\n&quot;
+        + &quot;- &quot; + this.complete + &quot;\n&quot;;
+  }
+
+
+  /**
+   * Clone task with and connects the clone so they both get completed at the same time
+   *
+   * @return the task
+   */
+  public Task cloneBuddy() {
+<span class="fc" id="L238">    Task buddy = new Task(this.name, this.description, this.weekday, this.complete, this);</span>
+<span class="fc" id="L239">    this.cloneBuddies.add(buddy);</span>
+<span class="fc" id="L240">    return buddy;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

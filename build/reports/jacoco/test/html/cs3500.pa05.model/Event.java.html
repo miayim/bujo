@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Event.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.model</a> &gt; <span class="el_source">Event.java</span></div><h1>Event.java</h1><pre class="source lang-java linenums">package cs3500.pa05.model;
+
+import cs3500.pa05.model.json.EventJson;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javafx.geometry.Insets;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+
+
+/**
+ * An Event in a Bujo week.
+ */
+public final class Event extends VBox {
+  private final String name;
+  private final String description;
+  private final Weekday weekday;
+  private final Time startTime;
+  private final Time endTime;
+  private TextFlow nameBox;
+  private TextFlow descBox;
+  private TextFlow startTimeBox;
+  private TextFlow endTimeBox;
+  private VBox innerBox;
+
+  /**
+   * creates an event with a given duration
+   * MOST LIKELY USED FOR JSON CREATION (as it has the duration)
+   *
+   * @param name        Name of the event
+   * @param description Description of the event
+   * @param weekday     Weekday the event is occurring on
+   * @param startTime   Starting time of the event
+   * @param duration    Duration of the event (in minutes)
+   */
+<span class="fc" id="L42">  public Event(String name, String description, Weekday weekday, Time startTime, int duration) {</span>
+<span class="fc" id="L43">    this.name = name;</span>
+<span class="fc" id="L44">    this.description = description;</span>
+<span class="fc" id="L45">    this.weekday = weekday;</span>
+<span class="fc" id="L46">    this.startTime = startTime;</span>
+<span class="fc" id="L47">    this.endTime = new Time(startTime.getHour(), startTime.getMinute(), startTime.getAmPm());</span>
+<span class="fc" id="L48">    this.endTime.addMinutes(duration);</span>
+<span class="fc" id="L49">    init();</span>
+<span class="fc" id="L50">  }</span>
+
+
+  /**
+   * creates an event with a given endtime
+   *
+   * @param name        Name of the event
+   * @param description Description of the event
+   * @param weekday     Weekday the event is occuring on
+   * @param startTime   Starting time of the event
+   * @param endTime     Ending time of the event
+   */
+<span class="fc" id="L62">  public Event(String name, String description, Weekday weekday, Time startTime, Time endTime) {</span>
+<span class="fc" id="L63">    this.name = name;</span>
+<span class="fc" id="L64">    this.description = description;</span>
+<span class="fc" id="L65">    this.weekday = weekday;</span>
+<span class="fc" id="L66">    this.startTime = startTime;</span>
+<span class="fc" id="L67">    this.endTime = endTime;</span>
+<span class="fc" id="L68">    init();</span>
+<span class="fc" id="L69">  }</span>
+
+  /**
+   * To json event json.
+   *
+   * @return the event json
+   */
+  public EventJson toJson() {
+<span class="fc" id="L77">    return new EventJson(name, description, weekday, startTime.toJson(), endTime.toJson());</span>
+  }
+
+  /**
+   * Method to initialize all the fields in the VBox
+   */
+  private void init() {
+<span class="fc" id="L84">    nameBox = new TextFlow();</span>
+<span class="fc" id="L85">    innerBox = new VBox();</span>
+<span class="fc" id="L86">    descBox = new TextFlow();</span>
+<span class="fc" id="L87">    startTimeBox = new TextFlow();</span>
+<span class="fc" id="L88">    endTimeBox = new TextFlow();</span>
+<span class="fc" id="L89">    innerBox.setStyle(&quot;-fx-background-color: #C8E9B9;&quot;);</span>
+<span class="fc" id="L90">    nameBox.getChildren().add(new Text(this.name));</span>
+<span class="fc" id="L91">    nameBox.setStyle(&quot;-fx-text-fill: black; -fx-font-size: 14px;&quot;);</span>
+<span class="fc" id="L92">    innerBox.getChildren().add(nameBox);</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">    if (description != null) {</span>
+<span class="fc" id="L94">      processDesc();</span>
+<span class="fc" id="L95">      innerBox.getChildren().add(descBox);</span>
+    }
+<span class="fc" id="L97">    endTimeBox.getChildren().add(new Text(endTime.toString()));</span>
+<span class="fc" id="L98">    endTimeBox.setStyle(&quot;-fx-text-fill: black; -fx-font-size: 12px;&quot;);</span>
+
+<span class="fc" id="L100">    startTimeBox.getChildren().add(new Text(startTime.toString()));</span>
+<span class="fc" id="L101">    startTimeBox.setStyle(&quot;-fx-text-fill: black; -fx-font-size: 12px;&quot;);</span>
+
+<span class="fc" id="L103">    innerBox.getChildren().addAll(startTimeBox, endTimeBox);</span>
+
+<span class="fc" id="L105">    innerBox.setPrefWidth(100);</span>
+<span class="fc" id="L106">    this.setPadding(new Insets(5, 5, 5, 5));</span>
+<span class="fc" id="L107">    this.getChildren().add(innerBox);</span>
+<span class="fc" id="L108">  }</span>
+
+  /**
+   * Process descrption
+   */
+  private void processDesc() {
+<span class="fc" id="L114">    String[] words = description.split(&quot; &quot;);</span>
+
+<span class="fc bfc" id="L116" title="All 2 branches covered.">    for (String word : words) {</span>
+<span class="pc bpc" id="L117" title="2 of 4 branches missed.">      if (word.startsWith(&quot;http://&quot;) || word.startsWith(&quot;https://&quot;)) {</span>
+<span class="nc" id="L118">        Hyperlink hyperlink = new Hyperlink(word);</span>
+<span class="nc" id="L119">        hyperlink.setOnAction(event -&gt; openUrl(hyperlink.getText()));</span>
+<span class="nc" id="L120">        hyperlink.setFont(new Font(6));</span>
+<span class="nc" id="L121">        descBox.getChildren().add(hyperlink);</span>
+<span class="nc" id="L122">      } else {</span>
+        // Create a regular Text node for other words
+<span class="fc" id="L124">        Text text = new Text(word + &quot; &quot;);</span>
+<span class="fc" id="L125">        text.setStyle(&quot;-fx-text-fill: black; -fx-font-size: 12px;&quot;);</span>
+<span class="fc" id="L126">        descBox.getChildren().add(text);</span>
+      }
+    }
+<span class="fc" id="L129">    descBox.setMaxWidth(100);</span>
+<span class="fc" id="L130">    descBox.setPrefHeight(Region.USE_COMPUTED_SIZE);</span>
+<span class="fc" id="L131">  }</span>
+
+  /**
+   * Open url.
+   *
+   * @param url the url
+   */
+  private void openUrl(String url) {
+    try {
+<span class="nc" id="L140">      Desktop.getDesktop().browse(new URI(url));</span>
+<span class="nc" id="L141">    } catch (IOException | URISyntaxException e) {</span>
+<span class="nc" id="L142">      e.printStackTrace();</span>
+<span class="nc" id="L143">    }</span>
+<span class="nc" id="L144">  }</span>
+
+  /**
+   * returns the name of the event
+   *
+   * @return a String representation of the name
+   */
+  public String getName() {
+<span class="fc" id="L152">    return name;</span>
+  }
+
+  /**
+   * returns the description of the event
+   *
+   * @return a String representation of the description
+   */
+  public String getDescription() {
+<span class="fc" id="L161">    return description;</span>
+  }
+
+  /**
+   * returns the Weekday that the event occurs on
+   *
+   * @return the Weekday the event occurs on
+   */
+  public Weekday getWeekday() {
+<span class="fc" id="L170">    return weekday;</span>
+  }
+
+  /**
+   * returns the starting time of the event
+   *
+   * @return the starting time of the event
+   */
+  public Time getStartTime() {
+<span class="fc" id="L179">    return startTime;</span>
+  }
+
+  /**
+   * returns the ending time of the event
+   *
+   * @return the ending time of the event
+   */
+  public Time getEndTime() {
+<span class="fc" id="L188">    return endTime;</span>
+  }
+
+  /**
+   * creates a string representation of the Event
+   *
+   * @return a String representation of the event
+   */
+  public String toString() {
+<span class="fc" id="L197">    return this.name + &quot;\n&quot;</span>
+<span class="fc" id="L198">       + &quot;- &quot; + this.weekday.toString() + &quot;\n&quot;</span>
+<span class="fc" id="L199">       + &quot;- &quot; + this.startTime.toString() + &quot;\n&quot;</span>
+<span class="fc" id="L200">       + &quot;- &quot; + this.endTime.toString() + &quot;\n&quot;</span>
+       + &quot;- &quot; + this.description + &quot;\n&quot;;
+  }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

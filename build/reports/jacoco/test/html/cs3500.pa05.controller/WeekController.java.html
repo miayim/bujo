@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeekController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.controller</a> &gt; <span class="el_source">WeekController.java</span></div><h1>WeekController.java</h1><pre class="source lang-java linenums">package cs3500.pa05.controller;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cs3500.pa05.model.Event;
+import cs3500.pa05.model.Task;
+import cs3500.pa05.model.Weekday;
+import cs3500.pa05.model.json.WeekRecord;
+import cs3500.pa05.view.BujoView;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.application.Application;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
+
+/**
+ * A controller which handles the week view
+ */
+public final class WeekController extends Application implements Icontroller {
+  private final Stage stage;
+  private final List&lt;Task&gt; tasks;
+  private final List&lt;Event&gt; events;
+  private WeekRecord weekJson;
+  @FXML
+  private ProgressBar taskBar;
+  @FXML
+  private TextField taskSearch;
+  @FXML
+  private TextField weekName;
+  @FXML
+  private TextArea notesAndQuotes;
+  @FXML
+  private Button newWeek;
+  @FXML
+  private Button newEvent;
+  @FXML
+  private Button newTask;
+  @FXML
+  private Button maxEvents;
+  @FXML
+  private Button maxTasks;
+  @FXML
+  private Button save;
+  @FXML
+  private Button open;
+  @FXML
+  private VBox taskQueue;
+  @FXML
+  private VBox sundayTasksBox;
+  @FXML
+  private VBox mondayTasksBox;
+  @FXML
+  private VBox tuesdayTasksBox;
+  @FXML
+  private VBox wednesdayTasksBox;
+  @FXML
+  private VBox thursdayTasksBox;
+  @FXML
+  private VBox fridayTasksBox;
+  @FXML
+  private VBox saturdayTasksBox;
+  @FXML
+  private VBox sundayEventsBox;
+  @FXML
+  private VBox mondayEventsBox;
+  @FXML
+  private VBox tuesdayEventsBox;
+  @FXML
+  private VBox wednesdayEventsBox;
+  @FXML
+  private VBox thursdayEventsBox;
+  @FXML
+  private VBox fridayEventsBox;
+  @FXML
+  private VBox saturdayEventsBox;
+  @FXML
+  private HBox fileChooserBox;
+  @FXML
+  private Button popupButton;
+  @FXML
+  private Label popupLabel;
+  @FXML
+  private Label fileLabel;
+  @FXML
+  private Button upButtonTask;
+  @FXML
+  private Button downButtonTask;
+  @FXML
+  private Button submitMaxTasks;
+  @FXML
+  private Label taskAmount;
+  @FXML
+  private Button upButtonEvent;
+  @FXML
+  private Button downButtonEvent;
+  @FXML
+  private Button submitMaxEvent;
+  @FXML
+  private Label eventAmount;
+  private int taskInt;
+  private int eventInt;
+  @FXML
+  private Scene scene;
+  @FXML
+  private Label maxTaskLabel;
+  @FXML
+  private Label maxEventLabel;
+  @FXML
+  private Label sundayRemaining;
+  @FXML
+  private ProgressBar sundayBar;
+  @FXML
+  private Label mondayRemaining;
+  @FXML
+  private ProgressBar mondayBar;
+  @FXML
+  private Label tuesdayRemaining;
+  @FXML
+  private ProgressBar tuesdayBar;
+  @FXML
+  private Label wednesdayRemaining;
+  @FXML
+  private ProgressBar wednesdayBar;
+  @FXML
+  private Label thursdayRemaining;
+  @FXML
+  private ProgressBar thursdayBar;
+  @FXML
+  private Label fridayRemaining;
+  @FXML
+  private ProgressBar fridayBar;
+  @FXML
+  private Label saturdayRemaining;
+  @FXML
+  private ProgressBar saturdayBar;
+  @FXML
+  private PasswordField passwordField;
+  @FXML
+  private Button setPassword;
+  private File selectedFile;
+  private List&lt;Task&gt; tasksInQueue;
+  @FXML
+  private Button exitButton;
+
+  /**
+   * Creates a WeekJson without a predetermined file
+   *
+   * @param weekJson WeekJson
+   * @param stage    The Stage to be set on
+   */
+<span class="nc" id="L170">  public WeekController(WeekRecord weekJson, Stage stage) {</span>
+<span class="nc" id="L171">    this.weekJson = weekJson;</span>
+<span class="nc" id="L172">    this.stage = stage;</span>
+<span class="nc" id="L173">    taskInt = weekJson.maxTasks();</span>
+<span class="nc" id="L174">    eventInt = weekJson.maxEvents();</span>
+<span class="nc" id="L175">    tasks = weekJson.taskList();</span>
+<span class="nc" id="L176">    events = weekJson.eventList();</span>
+<span class="nc" id="L177">    this.tasksInQueue = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L178">  }</span>
+
+  /**
+   * creates a new WeekController with a FilePath
+   *
+   * @param weekJson WeekJson
+   * @param stage    The Stage to be set on
+   * @param file     The file to be saved to
+   */
+  public WeekController(WeekRecord weekJson, Stage stage, File file) {
+<span class="nc" id="L188">    this(weekJson, stage);</span>
+<span class="nc" id="L189">    this.selectedFile = file;</span>
+<span class="nc" id="L190">    this.tasksInQueue = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L191">  }</span>
+
+  /**
+   * places an event in the eventList, removing any duplicates
+   */
+  private void placeEvents() {
+<span class="nc bnc" id="L197" title="All 2 branches missed.">    for (Event event : events) {</span>
+<span class="nc" id="L198">      addEvent(event);</span>
+<span class="nc" id="L199">    }</span>
+<span class="nc" id="L200">  }</span>
+
+  /**
+   * places a task in the taskList, removing any duplicates
+   */
+  private void placeTask() {
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    for (Task task : tasks) {</span>
+<span class="nc" id="L207">      addTask(task);</span>
+<span class="nc" id="L208">    }</span>
+<span class="nc" id="L209">  }</span>
+
+  /**
+   * filters a list of tasks by those that partially match
+   *
+   * @param tasks  Task list to analyze
+   * @param string String to check if matches
+   * @return True if the substring is contained in the name or description
+   */
+  private List&lt;Task&gt; filterByContains(List&lt;Task&gt; tasks, String string) {
+<span class="nc" id="L219">    List&lt;Task&gt; tasksStartWithString = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L220">    List&lt;Task&gt; tasksContainStringName = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L221">    List&lt;Task&gt; tasksContainStringDescription = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L223" title="All 2 branches missed.">    for (int i = 0; i &lt; tasks.size(); i += 1) {</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">      if (tasks.get(i).toJson().containsName(string)) {</span>
+<span class="nc" id="L225">        tasksContainStringName.add(tasks.remove(i));</span>
+      }
+    }
+
+<span class="nc bnc" id="L229" title="All 2 branches missed.">    for (int i = 0; i &lt; tasks.size(); i += 1) {</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">      if (tasks.get(i).toJson().startsWithName(string)) {</span>
+<span class="nc" id="L231">        tasksStartWithString.add(tasks.remove(i));</span>
+      }
+    }
+
+<span class="nc bnc" id="L235" title="All 2 branches missed.">    for (int i = 0; i &lt; tasks.size(); i += 1) {</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">      if (tasks.get(i).toJson().containsDescription(string)) {</span>
+<span class="nc" id="L237">        tasksContainStringDescription.add(tasks.remove(i));</span>
+      }
+    }
+
+<span class="nc" id="L241">    List&lt;Task&gt; allSearchMatches = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L242">    allSearchMatches.addAll(tasksStartWithString);</span>
+<span class="nc" id="L243">    allSearchMatches.addAll(tasksContainStringName);</span>
+<span class="nc" id="L244">    allSearchMatches.addAll(tasksContainStringDescription);</span>
+
+<span class="nc" id="L246">    return allSearchMatches;</span>
+  }
+
+  /**
+   * initialize the entire scene with the selected WeekJson if full, otherwise set to a default
+   */
+  @FXML
+  public void init() {
+<span class="nc" id="L254">    weekName.setText(this.weekJson.name());</span>
+<span class="nc" id="L255">    notesAndQuotes.setText(this.weekJson.notesAndQuotes());</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">    if (taskInt == Integer.MAX_VALUE) {</span>
+<span class="nc" id="L257">      maxTaskLabel.setText(&quot;Max Tasks: &quot;);</span>
+    } else {
+<span class="nc" id="L259">      maxTaskLabel.setText(&quot;Max Tasks: &quot; + taskInt);</span>
+    }
+<span class="nc bnc" id="L261" title="All 2 branches missed.">    if (eventInt == Integer.MAX_VALUE) {</span>
+<span class="nc" id="L262">      maxEventLabel.setText(&quot;Max Events: &quot;);</span>
+    } else {
+<span class="nc" id="L264">      maxEventLabel.setText(&quot;Max Events: &quot; + eventInt);</span>
+    }
+<span class="nc" id="L266">    taskBar.setProgress(this.weekJson.percentOfTasksComplete());</span>
+<span class="nc" id="L267">    taskBar.setStyle(&quot;-fx-accent: #A0CE8B;&quot;);</span>
+<span class="nc" id="L268">    taskSearch.setOnKeyPressed(e -&gt; this.handleTaskSearch());</span>
+
+<span class="nc" id="L270">    newWeek.setOnAction(e -&gt; this.handleNewWeek());</span>
+<span class="nc" id="L271">    newEvent.setOnAction(e -&gt; this.handleNewEvent());</span>
+<span class="nc" id="L272">    newTask.setOnAction(e -&gt; this.handleNewTask());</span>
+<span class="nc" id="L273">    maxEvents.setOnAction(e -&gt; this.handleSetMaxEvents());</span>
+<span class="nc" id="L274">    maxTasks.setOnAction(e -&gt; this.handleMaxTasks());</span>
+<span class="nc" id="L275">    save.setOnAction(e -&gt; this.save());</span>
+<span class="nc" id="L276">    open.setOnAction(e -&gt; this.handleOpen());</span>
+<span class="nc" id="L277">    setPassword.setOnAction(e -&gt; this.handleSetPassword());</span>
+
+<span class="nc" id="L279">    initShortcuts();</span>
+<span class="nc" id="L280">    placeEvents();</span>
+<span class="nc" id="L281">    placeTask();</span>
+<span class="nc" id="L282">  }</span>
+
+  /**
+   * handle all keyboard shortcuts that the user could create
+   */
+  private void initShortcuts() {
+<span class="nc" id="L288">    KeyCombination saveShortcut = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);</span>
+<span class="nc" id="L289">    KeyCombination openShortcut = new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN);</span>
+<span class="nc" id="L290">    KeyCombination taskShortcut = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);</span>
+<span class="nc" id="L291">    KeyCombination eventShortcut = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);</span>
+<span class="nc" id="L292">    KeyCombination newWeekShortcut = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);</span>
+<span class="nc" id="L293">    KeyCombination maxEventsShortcut =</span>
+        new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+<span class="nc" id="L295">    KeyCombination maxTaskShortcut =</span>
+        new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+<span class="nc" id="L297">    KeyCombination passwordShortcut =</span>
+        new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
+
+<span class="nc" id="L300">    scene.setOnKeyPressed(event -&gt; {</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">      if (passwordShortcut.match(event)) {</span>
+<span class="nc" id="L302">        handleSetPassword();</span>
+      }
+<span class="nc bnc" id="L304" title="All 2 branches missed.">      if (saveShortcut.match(event)) {</span>
+<span class="nc" id="L305">        save();</span>
+      }
+<span class="nc bnc" id="L307" title="All 2 branches missed.">      if (maxEventsShortcut.match(event)) {</span>
+<span class="nc" id="L308">        handleSetMaxEvents();</span>
+      }
+<span class="nc bnc" id="L310" title="All 2 branches missed.">      if (maxTaskShortcut.match(event)) {</span>
+<span class="nc" id="L311">        handleMaxTasks();</span>
+      }
+<span class="nc bnc" id="L313" title="All 2 branches missed.">      if (openShortcut.match(event)) {</span>
+<span class="nc" id="L314">        handleOpen();</span>
+      }
+<span class="nc bnc" id="L316" title="All 2 branches missed.">      if (taskShortcut.match(event)) {</span>
+<span class="nc" id="L317">        handleNewTask();</span>
+      }
+<span class="nc bnc" id="L319" title="All 2 branches missed.">      if (eventShortcut.match(event)) {</span>
+<span class="nc" id="L320">        handleNewEvent();</span>
+      }
+<span class="nc bnc" id="L322" title="All 2 branches missed.">      if (newWeekShortcut.match(event)) {</span>
+<span class="nc" id="L323">        handleNewWeek();</span>
+      }
+<span class="nc" id="L325">    });</span>
+<span class="nc" id="L326">  }</span>
+
+  /**
+   * when the user wants to set a different password, prompt the user for a new password
+   */
+  private void handleSetPassword() {
+<span class="nc" id="L332">    this.weekJson = new WeekRecord(this.weekName.getText(), this.weekJson.tasks(),</span>
+<span class="nc" id="L333">        this.weekJson.events(), this.weekJson.maxEvents(), this.weekJson.maxTasks(),</span>
+<span class="nc" id="L334">        this.notesAndQuotes.getText(), this.weekJson.password());</span>
+<span class="nc" id="L335">    PasswordController passwordController = new PasswordController(stage, weekJson);</span>
+<span class="nc" id="L336">    BujoView bujoView = new BujoView();</span>
+<span class="nc" id="L337">    Stage newStage = new Stage();</span>
+    try {
+      // load and place the view's scene onto the stage
+<span class="nc" id="L340">      newStage.setScene(bujoView.loadPasswordPrompt(passwordController));</span>
+<span class="nc" id="L341">      passwordController.setNewPassword();</span>
+
+      // render the stage
+<span class="nc" id="L344">      newStage.show();</span>
+<span class="nc" id="L345">    } catch (IllegalStateException exc) {</span>
+<span class="nc" id="L346">      throw new RuntimeException(&quot;Unable to load GUI.&quot;);</span>
+<span class="nc" id="L347">    }</span>
+<span class="nc" id="L348">  }</span>
+
+  /**
+   * When the user types a character into the TaskSearch bar, filter out all of the tasks
+   * that don't apply to the filter.
+   */
+  @FXML
+  private void handleTaskSearch() {
+<span class="nc" id="L356">    this.taskQueue.getChildren().clear();</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">    for (Task task : tasksInQueue) {</span>
+<span class="nc" id="L358">      this.taskQueue.getChildren().add(task);</span>
+<span class="nc" id="L359">    }</span>
+<span class="nc" id="L360">    String search = this.taskSearch.getText();</span>
+<span class="nc" id="L361">    ObservableList&lt;Node&gt; potentialTaskList = this.taskQueue.getChildren();</span>
+<span class="nc" id="L362">    List&lt;Task&gt; tasksList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">    for (Node node : potentialTaskList) {</span>
+<span class="nc bnc" id="L364" title="All 2 branches missed.">      if (node instanceof Task) {</span>
+<span class="nc" id="L365">        tasksList.add((Task) node);</span>
+      }
+<span class="nc" id="L367">    }</span>
+<span class="nc" id="L368">    List&lt;Task&gt; tasksInSearch = this.filterByContains(tasksList, search);</span>
+
+<span class="nc" id="L370">    this.taskQueue.getChildren().clear();</span>
+<span class="nc bnc" id="L371" title="All 2 branches missed.">    for (Task task : tasksInSearch) {</span>
+<span class="nc" id="L372">      this.taskQueue.getChildren().add(task);</span>
+
+<span class="nc" id="L374">      task.setOnMouseClicked(e -&gt; {</span>
+<span class="nc" id="L375">        task.changeComplete();</span>
+<span class="nc" id="L376">        updateProgress();</span>
+<span class="nc" id="L377">      });</span>
+
+<span class="nc" id="L379">      this.weekJson.addTask(task);</span>
+<span class="nc" id="L380">    }</span>
+<span class="nc" id="L381">  }</span>
+
+  /**
+   * When the user presses the &quot;New Week&quot; button,
+   * create a new week with another user-generated password
+   */
+  @FXML
+  private void handleNewWeek() {
+    //this.stage.close();
+
+<span class="nc" id="L391">    SplashController splashController = new SplashController(weekJson, new Stage());</span>
+<span class="nc" id="L392">    splashController.promptPassword();</span>
+
+<span class="nc" id="L394">  }</span>
+
+  /**
+   * If the user presses the &quot;New Event&quot; button, display a popup to the user requesting
+   * event information
+   */
+  @FXML
+  private void handleNewEvent() {
+<span class="nc" id="L402">    Stage stage = new Stage();</span>
+<span class="nc" id="L403">    EventController controller = new EventController();</span>
+<span class="nc" id="L404">    controller.createNewEvent(this, stage);</span>
+<span class="nc" id="L405">  }</span>
+
+  /**
+   * If the user presses the &quot;New Task&quot; button, display a popup to the user requesting
+   * task information
+   */
+  @FXML
+  private void handleNewTask() {
+<span class="nc" id="L413">    Stage stage = new Stage();</span>
+<span class="nc" id="L414">    TaskController controller = new TaskController();</span>
+<span class="nc" id="L415">    controller.createNewTask(stage, this);</span>
+<span class="nc" id="L416">  }</span>
+
+  /**
+   * When the user wants to set the maximum amount of events in a day, prompt the user for a number
+   * and update corresponding values
+   */
+  @FXML
+  private void handleSetMaxEvents() {
+<span class="nc" id="L424">    this.eventInt = 0;</span>
+<span class="nc" id="L425">    Popup popup = new Popup();</span>
+<span class="nc" id="L426">    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(</span>
+        &quot;MaxEvents.fxml&quot;));
+<span class="nc" id="L428">    loader.setController(this);</span>
+<span class="nc" id="L429">    Scene s = null;</span>
+    try {
+<span class="nc" id="L431">      s = loader.load();</span>
+<span class="nc" id="L432">    } catch (IOException e) {</span>
+<span class="nc" id="L433">      throw new RuntimeException(e);</span>
+<span class="nc" id="L434">    }</span>
+<span class="nc" id="L435">    popup.getContent().add(s.getRoot());</span>
+<span class="nc" id="L436">    submitMaxEvent.setOnAction(event -&gt; {</span>
+<span class="nc" id="L437">      int amountOfTask = Integer.parseInt(eventAmount.getText());</span>
+<span class="nc bnc" id="L438" title="All 2 branches missed.">      if (amountOfTask &lt; 0) {</span>
+<span class="nc" id="L439">        showPopup(&quot;Please enter a non negative event number&quot;);</span>
+      } else {
+<span class="nc" id="L441">        popup.hide();</span>
+<span class="nc" id="L442">        maxEventLabel.setText(&quot;Max Events: &quot; + eventInt);</span>
+      }
+
+<span class="nc" id="L445">    });</span>
+<span class="nc" id="L446">    upButtonEvent.setOnAction(e -&gt; {</span>
+<span class="nc" id="L447">      eventInt += 1;</span>
+<span class="nc" id="L448">      eventAmount.setText(String.valueOf(eventInt));</span>
+<span class="nc" id="L449">    });</span>
+
+<span class="nc" id="L451">    downButtonEvent.setOnAction(e -&gt; {</span>
+<span class="nc" id="L452">      eventInt -= 1;</span>
+<span class="nc" id="L453">      eventAmount.setText(String.valueOf(eventInt));</span>
+<span class="nc" id="L454">    });</span>
+
+<span class="nc" id="L456">    exitButton.setOnAction(e -&gt; popup.hide());</span>
+<span class="nc" id="L457">    popup.show(stage);</span>
+<span class="nc" id="L458">  }</span>
+
+  /**
+   * When the user wants to set the maximum amount of tasks in a day, prompt the user for a number
+   * and update corresponding values
+   */
+  @FXML
+  private void handleMaxTasks() {
+<span class="nc" id="L466">    this.taskInt = 0;</span>
+<span class="nc" id="L467">    Popup popup = new Popup();</span>
+<span class="nc" id="L468">    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(&quot;MaxTasks.fxml&quot;));</span>
+<span class="nc" id="L469">    loader.setController(this);</span>
+<span class="nc" id="L470">    Scene s = null;</span>
+    try {
+<span class="nc" id="L472">      s = loader.load();</span>
+<span class="nc" id="L473">    } catch (IOException e) {</span>
+<span class="nc" id="L474">      throw new RuntimeException(e);</span>
+<span class="nc" id="L475">    }</span>
+<span class="nc" id="L476">    popup.getContent().add(s.getRoot());</span>
+<span class="nc" id="L477">    submitMaxTasks.setOnAction(event -&gt; {</span>
+<span class="nc" id="L478">      int amountOfTask = Integer.parseInt(taskAmount.getText());</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">      if (amountOfTask &lt; 0) {</span>
+<span class="nc" id="L480">        showPopup(&quot;Please enter a non negative tasks number&quot;);</span>
+      } else {
+<span class="nc" id="L482">        popup.hide();</span>
+<span class="nc" id="L483">        maxTaskLabel.setText(&quot;Max Tasks: &quot; + taskInt);</span>
+      }
+
+<span class="nc" id="L486">    });</span>
+<span class="nc" id="L487">    upButtonTask.setOnAction(e -&gt; {</span>
+<span class="nc" id="L488">      taskInt += 1;</span>
+<span class="nc" id="L489">      taskAmount.setText(String.valueOf(taskInt));</span>
+<span class="nc" id="L490">    });</span>
+
+<span class="nc" id="L492">    downButtonTask.setOnAction(e -&gt; {</span>
+<span class="nc" id="L493">      taskInt -= 1;</span>
+<span class="nc" id="L494">      taskAmount.setText(String.valueOf(taskInt));</span>
+<span class="nc" id="L495">    });</span>
+<span class="nc" id="L496">    exitButton.setOnAction(e -&gt; popup.hide());</span>
+
+
+<span class="nc" id="L499">    popup.show(stage);</span>
+<span class="nc" id="L500">  }</span>
+
+  /**
+   * displays a popup to the user with a supplied message
+   *
+   * @param message Message to be displayed to the user
+   */
+  private void showPopup(String message) {
+<span class="nc" id="L508">    Popup popup = new Popup();</span>
+<span class="nc" id="L509">    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(&quot;popup.fxml&quot;));</span>
+<span class="nc" id="L510">    loader.setController(this);</span>
+<span class="nc" id="L511">    Scene s = null;</span>
+    try {
+<span class="nc" id="L513">      s = loader.load();</span>
+<span class="nc" id="L514">    } catch (IOException e) {</span>
+<span class="nc" id="L515">      throw new RuntimeException(e);</span>
+<span class="nc" id="L516">    }</span>
+<span class="nc" id="L517">    popup.getContent().add(s.getRoot());</span>
+<span class="nc" id="L518">    popupLabel.setText(message);</span>
+<span class="nc" id="L519">    popup.show(stage);</span>
+<span class="nc" id="L520">    popupButton.setOnAction(e -&gt; popup.hide());</span>
+
+<span class="nc" id="L522">  }</span>
+
+  /**
+   * Saves the entire weekJson to the selected file (given by the user or defaulted through ops)
+   */
+  @FXML
+  public void save() {
+<span class="nc" id="L529">    ObjectMapper objectMapper = new ObjectMapper();</span>
+
+<span class="nc" id="L531">    this.weekJson = new WeekRecord(this.weekName.getText(), this.weekJson.tasks(),</span>
+<span class="nc" id="L532">        this.weekJson.events(), this.weekJson.maxEvents(), this.weekJson.maxTasks(),</span>
+<span class="nc" id="L533">        this.notesAndQuotes.getText(), this.weekJson.password());</span>
+
+<span class="nc" id="L535">    String jsonString = &quot;&quot;;</span>
+
+<span class="nc bnc" id="L537" title="All 2 branches missed.">    if (selectedFile != null) {</span>
+<span class="nc" id="L538">      FileWriter fileWriter = new FileWriter();</span>
+<span class="nc" id="L539">      Path path = Path.of(selectedFile.getPath());</span>
+
+      try {
+<span class="nc" id="L542">        jsonString = objectMapper.writeValueAsString(this.weekJson);</span>
+
+<span class="nc" id="L544">      } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L545">        throw new RuntimeException(e);</span>
+<span class="nc" id="L546">      }</span>
+
+<span class="nc" id="L548">      fileWriter.writeBujoString(path, jsonString);</span>
+<span class="nc" id="L549">      showPopup(&quot;Saved!&quot;);</span>
+<span class="nc" id="L550">    } else {</span>
+<span class="nc" id="L551">      handleUnsavedFile();</span>
+    }
+<span class="nc" id="L553">  }</span>
+
+  /**
+   * When the user isn't rewriting a file and is instead operating under a new week and they
+   * press the &quot;Save&quot; button, prompt the user for a place to save the file.
+   */
+  private void handleUnsavedFile() {
+<span class="nc" id="L560">    BujoView bujoView = new BujoView();</span>
+
+<span class="nc" id="L562">    Popup savePopup = new Popup();</span>
+    // load and place the view's scene onto the stage
+<span class="nc" id="L564">    Scene saveScene = bujoView.load(this, &quot;Open&quot;);</span>
+<span class="nc" id="L565">    savePopup.getContent().add(saveScene.getRoot());</span>
+<span class="nc" id="L566">    BujoFileToModel bujoFileToModel = new BujoFileToModel();</span>
+<span class="nc" id="L567">    Button chooserButton = bujoFileToModel.saveFile(savePopup, this);</span>
+<span class="nc" id="L568">    Button exitButton = new Button(&quot;Exit&quot;);</span>
+<span class="nc" id="L569">    chooserButton.setStyle(&quot;-fx-font-family: Futura; -fx-border-color: black; &quot;</span>
+        + &quot;-fx-background-color: #FBFBF5; &quot;);
+<span class="nc" id="L571">    exitButton.setStyle(&quot;-fx-font-family: Futura; -fx-border-color: black; &quot;</span>
+        + &quot;-fx-background-color: #FBFBF5; &quot;);
+<span class="nc" id="L573">    exitButton.setOnAction(e -&gt; savePopup.hide());</span>
+<span class="nc" id="L574">    this.fileLabel.setText(&quot;Select a place to save the file.&quot;);</span>
+<span class="nc" id="L575">    this.fileChooserBox.getChildren().add(chooserButton);</span>
+<span class="nc" id="L576">    this.fileChooserBox.getChildren().add(exitButton);</span>
+<span class="nc" id="L577">    savePopup.show(this.stage);</span>
+<span class="nc" id="L578">  }</span>
+
+  /**
+   * when the user clicks the &quot;Open&quot; button, prompt the user for a file through a popup
+   * and render the new week
+   */
+  @FXML
+  protected void handleOpen() {
+
+<span class="nc" id="L587">    BujoView bujoView = new BujoView();</span>
+<span class="nc" id="L588">    Stage stage = new Stage();</span>
+
+    try {
+      // load and place the view's scene onto the stage
+<span class="nc" id="L592">      stage.setScene(bujoView.load(this, &quot;Open&quot;));</span>
+<span class="nc" id="L593">      BujoFileToModel bujoFileToModel = new BujoFileToModel();</span>
+<span class="nc" id="L594">      Button chooserButton = bujoFileToModel.initFileChooser(stage, this.stage);</span>
+<span class="nc" id="L595">      chooserButton.setStyle(&quot;-fx-font-family: Futura; -fx-border-color: black; &quot;</span>
+          + &quot;-fx-background-color: #FBFBF5; &quot;);
+<span class="nc" id="L597">      this.fileChooserBox.getChildren().add(chooserButton);</span>
+
+      // render the stage
+<span class="nc" id="L600">      stage.show();</span>
+<span class="nc" id="L601">    } catch (IllegalStateException exc) {</span>
+<span class="nc" id="L602">      throw new RuntimeException();</span>
+<span class="nc" id="L603">    }</span>
+    // take that file name and pass it into apply in the file to fxml function object
+<span class="nc" id="L605">  }</span>
+
+  /**
+   * The main entry point for all JavaFX applications.
+   * The start method is called after the init method has returned,
+   * and after the system is ready for the application to begin running.
+   *
+   * &lt;p&gt;
+   * NOTE: This method is called on the JavaFX Application Thread.
+   * &lt;/p&gt;
+   *
+   * @param stage the primary stage for this application, onto which
+   *              the application scene can be set.
+   *              Applications may create other stages, if needed, but they will not be
+   *              primary stages.
+   **/
+  @Override
+  public void start(Stage stage) {
+
+<span class="nc" id="L624">    BujoView bujoView = new BujoView();</span>
+
+    try {
+      // load and place the view's scene onto the stage
+<span class="nc" id="L628">      stage.setScene(bujoView.loadWeek(this));</span>
+<span class="nc" id="L629">      this.init();</span>
+      // render the stage
+<span class="nc" id="L631">      stage.show();</span>
+<span class="nc" id="L632">    } catch (IllegalStateException exc) {</span>
+<span class="nc" id="L633">      throw new RuntimeException();</span>
+<span class="nc" id="L634">    }</span>
+<span class="nc" id="L635">  }</span>
+
+  /**
+   * determines if the current task-VBox has reached the maximum amount of tasks
+   *
+   * @param box Task-VBox to be checked
+   * @return True if the size is greater than or equal to the maximum amount of tasks
+   */
+  private boolean checkMaxTask(VBox box) {
+<span class="nc bnc" id="L644" title="All 2 branches missed.">    return box.getChildren().size() &gt;= taskInt;</span>
+  }
+
+  /**
+   * given a task, determine if it overloads the specific day's maximum amount of tasks,
+   * then add onclick events to the main task (to display information) and the
+   * buddy task (to mark the task as complete or not), and updates all daily boxes
+   *
+   * @param task Task looking to be added
+   */
+  public void addTask(Task task) {
+<span class="nc" id="L655">    task.setOnMouseClicked(event -&gt; {</span>
+<span class="nc bnc" id="L656" title="All 2 branches missed.">      String completeness = task.isComplete() ? &quot;Yes&quot; : &quot;No&quot;;</span>
+<span class="nc" id="L657">      showPopup(&quot;Title: &quot; + task.getName() + &quot;\nDescription: &quot; + task.getDescription()</span>
+<span class="nc" id="L658">          + &quot;\nSet to be on: &quot; + task.getWeekday().toString()</span>
+          + &quot;\nMarked as complete? &quot; + completeness);
+      //display a popup displaying the task and the task information
+<span class="nc" id="L661">    });</span>
+
+<span class="nc" id="L663">    Weekday day = task.getWeekday();</span>
+<span class="nc bnc" id="L664" title="All 2 branches missed.">    if (day.equals(Weekday.SUNDAY)) {</span>
+<span class="nc bnc" id="L665" title="All 2 branches missed.">      if (checkMaxTask(sundayTasksBox)) {</span>
+<span class="nc" id="L666">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L667">        return;</span>
+      }
+<span class="nc" id="L669">      sundayTasksBox.getChildren().add(task);</span>
+    }
+
+<span class="nc bnc" id="L672" title="All 2 branches missed.">    if (day.equals(Weekday.MONDAY)) {</span>
+<span class="nc bnc" id="L673" title="All 2 branches missed.">      if (checkMaxTask(mondayTasksBox)) {</span>
+<span class="nc" id="L674">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L675">        return;</span>
+      }
+<span class="nc" id="L677">      mondayTasksBox.getChildren().add(task);</span>
+    }
+
+<span class="nc bnc" id="L680" title="All 2 branches missed.">    if (day.equals(Weekday.TUESDAY)) {</span>
+<span class="nc bnc" id="L681" title="All 2 branches missed.">      if (checkMaxTask(tuesdayTasksBox)) {</span>
+<span class="nc" id="L682">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L683">        return;</span>
+      }
+<span class="nc" id="L685">      tuesdayTasksBox.getChildren().add(task);</span>
+    }
+
+<span class="nc bnc" id="L688" title="All 2 branches missed.">    if (day.equals(Weekday.WEDNESDAY)) {</span>
+<span class="nc bnc" id="L689" title="All 2 branches missed.">      if (checkMaxTask(wednesdayTasksBox)) {</span>
+<span class="nc" id="L690">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L691">        return;</span>
+      }
+<span class="nc" id="L693">      wednesdayTasksBox.getChildren().add(task);</span>
+    }
+
+<span class="nc bnc" id="L696" title="All 2 branches missed.">    if (day.equals(Weekday.THURSDAY)) {</span>
+<span class="nc bnc" id="L697" title="All 2 branches missed.">      if (checkMaxTask(thursdayTasksBox)) {</span>
+<span class="nc" id="L698">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L699">        return;</span>
+      }
+<span class="nc" id="L701">      thursdayTasksBox.getChildren().add(task);</span>
+    }
+
+<span class="nc bnc" id="L704" title="All 2 branches missed.">    if (day.equals(Weekday.FRIDAY)) {</span>
+<span class="nc bnc" id="L705" title="All 2 branches missed.">      if (checkMaxTask(fridayTasksBox)) {</span>
+<span class="nc" id="L706">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L707">        return;</span>
+      }
+<span class="nc" id="L709">      fridayTasksBox.getChildren().add(task);</span>
+    }
+
+<span class="nc bnc" id="L712" title="All 2 branches missed.">    if (day.equals(Weekday.SATURDAY)) {</span>
+<span class="nc bnc" id="L713" title="All 2 branches missed.">      if (checkMaxTask(saturdayTasksBox)) {</span>
+<span class="nc" id="L714">        showPopup(&quot;You have entered the max amounts of tasks.&quot;);</span>
+<span class="nc" id="L715">        return;</span>
+      }
+<span class="nc" id="L717">      saturdayTasksBox.getChildren().add(task);</span>
+    }
+<span class="nc" id="L719">    Task differentTask = task.cloneBuddy();</span>
+
+<span class="nc" id="L721">    differentTask.setOnMouseClicked(e -&gt; {</span>
+<span class="nc" id="L722">      differentTask.changeComplete();</span>
+<span class="nc" id="L723">      this.weekJson.addTask(differentTask);</span>
+<span class="nc" id="L724">      updateProgress();</span>
+<span class="nc" id="L725">      updateDailyBoxes();</span>
+<span class="nc" id="L726">    });</span>
+
+<span class="nc" id="L728">    updateDailyBoxes();</span>
+
+<span class="nc" id="L730">    this.weekJson.addTask(differentTask);</span>
+<span class="nc" id="L731">    taskQueue.getChildren().add(differentTask);</span>
+<span class="nc" id="L732">    this.tasksInQueue.add(differentTask);</span>
+<span class="nc" id="L733">  }</span>
+
+  /**
+   * updates the progress of the overall taskBar
+   */
+  private void updateProgress() {
+<span class="nc" id="L739">    double totalTasks = taskQueue.getChildren().size();</span>
+<span class="nc" id="L740">    double completeTasks = 0.0;</span>
+<span class="nc bnc" id="L741" title="All 2 branches missed.">    for (Node n : taskQueue.getChildren()) {</span>
+<span class="nc" id="L742">      String[] splitString = n.toString().split(&quot;- &quot;);</span>
+<span class="nc bnc" id="L743" title="All 2 branches missed.">      if (splitString[splitString.length - 1].contains(&quot;true&quot;)) {</span>
+<span class="nc" id="L744">        completeTasks += 1.0;</span>
+      }
+<span class="nc" id="L746">    }</span>
+
+<span class="nc" id="L748">    taskBar.setProgress(completeTasks / totalTasks);</span>
+<span class="nc" id="L749">  }</span>
+
+  private boolean checkMaxEvent(VBox box) {
+<span class="nc bnc" id="L752" title="All 2 branches missed.">    return box.getChildren().size() &gt;= eventInt;</span>
+  }
+
+  /**
+   * updates all the daily totals for the tasks completed and tasks remaining.
+   */
+  private void updateDailyBoxes() {
+<span class="nc" id="L759">    updateRemainingTask(sundayTasksBox, sundayRemaining, sundayBar);</span>
+<span class="nc" id="L760">    updateRemainingTask(mondayTasksBox, mondayRemaining, mondayBar);</span>
+<span class="nc" id="L761">    updateRemainingTask(tuesdayTasksBox, tuesdayRemaining, tuesdayBar);</span>
+<span class="nc" id="L762">    updateRemainingTask(wednesdayTasksBox, wednesdayRemaining, wednesdayBar);</span>
+<span class="nc" id="L763">    updateRemainingTask(thursdayTasksBox, thursdayRemaining, thursdayBar);</span>
+<span class="nc" id="L764">    updateRemainingTask(fridayTasksBox, fridayRemaining, fridayBar);</span>
+<span class="nc" id="L765">    updateRemainingTask(saturdayTasksBox, saturdayRemaining, saturdayBar);</span>
+<span class="nc" id="L766">  }</span>
+
+  /**
+   * given a certain box, updates the entire daily value of remainingTasks and the progress bar
+   *
+   * @param box            Box to receive tasks from
+   * @param remainingLabel Label object containing a number representing tasks remaining
+   * @param bar            Progress bar for the tasks left to be completed
+   */
+  private void updateRemainingTask(VBox box, Label remainingLabel, ProgressBar bar) {
+<span class="nc" id="L776">    double totalTasks = box.getChildren().size();</span>
+<span class="nc" id="L777">    double completeTasks = 0.0;</span>
+<span class="nc bnc" id="L778" title="All 2 branches missed.">    for (Node n : box.getChildren()) {</span>
+<span class="nc" id="L779">      String[] splitString = n.toString().split(&quot;- &quot;);</span>
+<span class="nc bnc" id="L780" title="All 2 branches missed.">      if (splitString[splitString.length - 1].contains(&quot;true&quot;)) {</span>
+<span class="nc" id="L781">        completeTasks += 1.0;</span>
+      }
+<span class="nc" id="L783">    }</span>
+<span class="nc" id="L784">    remainingLabel.setText(String.valueOf((int) (totalTasks - completeTasks)));</span>
+
+<span class="nc" id="L786">    bar.setProgress(completeTasks / totalTasks);</span>
+<span class="nc" id="L787">    bar.setStyle(&quot;-fx-accent: #A0CE8B;&quot;);</span>
+<span class="nc" id="L788">  }</span>
+
+  /**
+   * checks if date the event takes place on hasn't been maxed out, then adds the event to
+   * the event list
+   *
+   * @param event Event looking to be added
+   */
+  public void addEvent(Event event) {
+<span class="nc" id="L797">    event.setOnMouseClicked(clickEvent -&gt;</span>
+<span class="nc" id="L798">        showPopup(&quot;Title: &quot; + event.getName() + &quot;\nDescription: &quot; + event.getDescription()</span>
+<span class="nc" id="L799">           + &quot;\nSet to be on: &quot; + event.getWeekday().toString() + &quot;\nStarts at: &quot;</span>
+<span class="nc" id="L800">           + event.getStartTime().toString() + &quot;\nEnds at: &quot; + event.getEndTime().toString())</span>
+    );
+
+<span class="nc" id="L803">    Weekday day = event.getWeekday();</span>
+<span class="nc bnc" id="L804" title="All 2 branches missed.">    if (day.equals(Weekday.SUNDAY)) {</span>
+<span class="nc bnc" id="L805" title="All 2 branches missed.">      if (checkMaxEvent(sundayEventsBox)) {</span>
+<span class="nc" id="L806">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L807">        return;</span>
+      }
+<span class="nc" id="L809">      sundayEventsBox.getChildren().add(event);</span>
+    }
+
+<span class="nc bnc" id="L812" title="All 2 branches missed.">    if (day.equals(Weekday.MONDAY)) {</span>
+<span class="nc bnc" id="L813" title="All 2 branches missed.">      if (checkMaxEvent(mondayEventsBox)) {</span>
+<span class="nc" id="L814">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L815">        return;</span>
+      }
+<span class="nc" id="L817">      mondayEventsBox.getChildren().add(event);</span>
+    }
+
+<span class="nc bnc" id="L820" title="All 2 branches missed.">    if (day.equals(Weekday.TUESDAY)) {</span>
+<span class="nc bnc" id="L821" title="All 2 branches missed.">      if (checkMaxEvent(tuesdayEventsBox)) {</span>
+<span class="nc" id="L822">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L823">        return;</span>
+      }
+<span class="nc" id="L825">      tuesdayEventsBox.getChildren().add(event);</span>
+    }
+
+<span class="nc bnc" id="L828" title="All 2 branches missed.">    if (day.equals(Weekday.WEDNESDAY)) {</span>
+<span class="nc bnc" id="L829" title="All 2 branches missed.">      if (checkMaxEvent(wednesdayEventsBox)) {</span>
+<span class="nc" id="L830">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L831">        return;</span>
+      }
+<span class="nc" id="L833">      wednesdayEventsBox.getChildren().add(event);</span>
+    }
+
+<span class="nc bnc" id="L836" title="All 2 branches missed.">    if (day.equals(Weekday.THURSDAY)) {</span>
+<span class="nc bnc" id="L837" title="All 2 branches missed.">      if (checkMaxEvent(thursdayEventsBox)) {</span>
+<span class="nc" id="L838">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L839">        return;</span>
+      }
+<span class="nc" id="L841">      thursdayEventsBox.getChildren().add(event);</span>
+    }
+
+<span class="nc bnc" id="L844" title="All 2 branches missed.">    if (day.equals(Weekday.FRIDAY)) {</span>
+<span class="nc bnc" id="L845" title="All 2 branches missed.">      if (checkMaxEvent(fridayEventsBox)) {</span>
+<span class="nc" id="L846">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L847">        return;</span>
+      }
+<span class="nc" id="L849">      fridayEventsBox.getChildren().add(event);</span>
+    }
+
+<span class="nc bnc" id="L852" title="All 2 branches missed.">    if (day.equals(Weekday.SATURDAY)) {</span>
+<span class="nc bnc" id="L853" title="All 2 branches missed.">      if (checkMaxEvent(saturdayEventsBox)) {</span>
+<span class="nc" id="L854">        showPopup(&quot;You have entered the max amounts of events.&quot;);</span>
+<span class="nc" id="L855">        return;</span>
+      }
+<span class="nc" id="L857">      saturdayEventsBox.getChildren().add(event);</span>
+    }
+<span class="nc" id="L859">    this.weekJson.addEvent(event);</span>
+<span class="nc" id="L860">  }</span>
+
+  /**
+   * sets the file to be a specific file
+   *
+   * @param file File to update the selected file
+   */
+  public void setFile(File file) {
+<span class="nc" id="L868">    this.selectedFile = file;</span>
+<span class="nc" id="L869">  }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

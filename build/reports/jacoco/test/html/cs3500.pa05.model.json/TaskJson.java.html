@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskJson.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.model.json</a> &gt; <span class="el_source">TaskJson.java</span></div><h1>TaskJson.java</h1><pre class="source lang-java linenums">package cs3500.pa05.model.json;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import cs3500.pa05.model.Task;
+import cs3500.pa05.model.Weekday;
+
+/**
+ * A Json representation of a Task
+ *
+ * @param name        Name of the task
+ * @param description Description of the task
+ * @param weekday     The Weekday the task is on
+ * @param complete    Boolean if the task is complete or not
+ */
+<span class="fc" id="L15">public record TaskJson(</span>
+
+    @JsonProperty(&quot;name&quot;) String name,
+    @JsonProperty(&quot;description&quot;) String description,
+    @JsonProperty(&quot;weekday&quot;) Weekday weekday,
+    @JsonProperty(&quot;complete&quot;) boolean complete
+) {
+
+  /**
+   * Translates the Json's parameters to a Task object
+   *
+   * @return a Task object with the same parameters as the Json
+   */
+  public Task toTask() {
+<span class="fc" id="L29">    return new Task(name, description, weekday, complete);</span>
+  }
+
+  /**
+   * Determines if a string is contained within the name of the Json
+   *
+   * @param string String to check if it's inside the Json
+   * @return True if the string is located inside the name
+   */
+  public boolean containsName(String string) {
+<span class="fc" id="L39">    return this.name.contains(string);</span>
+  }
+
+  /**
+   * Determines if the name of the task starts with a specific substring
+   *
+   * @param string string to look for
+   * @return True if the name starts with the given string
+   */
+  public boolean startsWithName(String string) {
+<span class="fc" id="L49">    return this.name.startsWith(string);</span>
+  }
+
+  /**
+   * Determines if the description contains the given substring
+   *
+   * @param name Substring to check if it's inside the description
+   * @return True if the supplied string is somewhere in the description.
+   */
+  public boolean containsDescription(String name) {
+<span class="fc" id="L59">    return this.description.contains(name);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

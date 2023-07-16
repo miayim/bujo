@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BujoView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.view</a> &gt; <span class="el_source">BujoView.java</span></div><h1>BujoView.java</h1><pre class="source lang-java linenums">package cs3500.pa05.view;
+
+import cs3500.pa05.controller.Icontroller;
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+
+/**
+ * The type Bujo view.
+ */
+public final class BujoView {
+  private final FXMLLoader loader;
+
+  /**
+   * Instantiates a new Bujo view.
+   */
+<span class="nc" id="L17">  public BujoView() {</span>
+<span class="nc" id="L18">    this.loader = new FXMLLoader();</span>
+<span class="nc" id="L19">  }</span>
+
+  /**
+   * Loads a week view from a Bujo week layout.
+   *
+   * @param controller the controller
+   * @return the layout
+   */
+  public Scene loadWeek(Icontroller controller) {
+<span class="nc" id="L28">    this.loader.setLocation(getClass().getClassLoader().getResource(&quot;WeekView.fxml&quot;));</span>
+<span class="nc" id="L29">    this.loader.setController(controller);</span>
+
+    // load the layout
+    try {
+<span class="nc" id="L33">      return this.loader.load();</span>
+<span class="nc" id="L34">    } catch (IOException exc) {</span>
+<span class="nc" id="L35">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+
+  /**
+   * Load splash screen scene.
+   *
+   * @param controller the controller
+   * @return the scene
+   */
+  public Scene loadSplashScreen(Icontroller controller) {
+<span class="nc" id="L46">    this.loader.setLocation(getClass().getClassLoader().getResource(&quot;SplashScreen.fxml&quot;));</span>
+<span class="nc" id="L47">    this.loader.setController(controller);</span>
+
+    // load the layout
+    try {
+<span class="nc" id="L51">      return this.loader.load();</span>
+<span class="nc" id="L52">    } catch (IOException exc) {</span>
+<span class="nc" id="L53">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+
+  /**
+   * Load password screen scene.
+   *
+   * @param controller the controller
+   * @return the scene
+   */
+  public Scene loadPasswordScreen(Icontroller controller) {
+<span class="nc" id="L64">    this.loader.setLocation(getClass().getClassLoader().getResource(&quot;PasswordScreen.fxml&quot;));</span>
+<span class="nc" id="L65">    this.loader.setController(controller);</span>
+
+    // load the layout
+    try {
+<span class="nc" id="L69">      return this.loader.load();</span>
+<span class="nc" id="L70">    } catch (IOException exc) {</span>
+<span class="nc" id="L71">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+
+  /**
+   * Load password prompt scene.
+   *
+   * @param controller the controller
+   * @return the scene
+   */
+  public Scene loadPasswordPrompt(Icontroller controller) {
+<span class="nc" id="L82">    this.loader.setLocation(getClass().getClassLoader().getResource(&quot;PasswordPrompt.fxml&quot;));</span>
+<span class="nc" id="L83">    this.loader.setController(controller);</span>
+
+    // load the layout
+    try {
+<span class="nc" id="L87">      return this.loader.load();</span>
+<span class="nc" id="L88">    } catch (IOException exc) {</span>
+<span class="nc" id="L89">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+
+
+  /**
+   * Load event scene.
+   *
+   * @param controller the controller
+   * @return the scene
+   */
+  public Scene loadEvent(Icontroller controller) {
+<span class="nc" id="L101">    this.loader.setController(controller);</span>
+<span class="nc" id="L102">    this.loader.setLocation(getClass().getClassLoader().getResource(&quot;NewEvent.fxml&quot;));</span>
+    try {
+<span class="nc" id="L104">      return this.loader.load();</span>
+<span class="nc" id="L105">    } catch (IOException exc) {</span>
+<span class="nc" id="L106">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+
+
+  /**
+   * Load tasks scene.
+   *
+   * @param controller the controller
+   * @return the scene
+   */
+  public Scene loadTask(Icontroller controller) {
+<span class="nc" id="L118">    this.loader.setController(controller);</span>
+<span class="nc" id="L119">    this.loader.setLocation(getClass().getClassLoader().getResource(&quot;NewTask.fxml&quot;));</span>
+    try {
+<span class="nc" id="L121">      return this.loader.load();</span>
+<span class="nc" id="L122">    } catch (IOException exc) {</span>
+<span class="nc" id="L123">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+
+  /**
+   * Load a week scene.
+   *
+   * @param controller the controller
+   * @param fxmlName   the fxml name
+   * @return the scene
+   */
+  public Scene load(Icontroller controller, String fxmlName) {
+<span class="nc" id="L135">    this.loader.setLocation(getClass().getClassLoader().getResource(</span>
+        fxmlName + &quot;.fxml&quot;));
+<span class="nc" id="L137">    this.loader.setController(controller);</span>
+
+    try {
+<span class="nc" id="L140">      return this.loader.load();</span>
+<span class="nc" id="L141">    } catch (IOException exc) {</span>
+<span class="nc" id="L142">      throw new IllegalStateException(&quot;Unable to load layout.&quot;);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cs3500.pa05.model.FileWriterTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-06-22T16:29:04" hostname="Mias-MacBook-Pro.local" time="0.368">
+  <properties/>
+  <testcase name="testAddBujo()" classname="cs3500.pa05.model.FileWriterTest" time="0.002"/>
+  <testcase name="testStringBujoWrite()" classname="cs3500.pa05.model.FileWriterTest" time="0.002"/>
+  <testcase name="testWriteBujo()" classname="cs3500.pa05.model.FileWriterTest" time="0.364"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

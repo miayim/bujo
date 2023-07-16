@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.10.0">
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/TimeTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/EventTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/FileWriterTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/json/TaskJsonTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/json/TimeJsonTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/json/EventJsonTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/json/WeekRecordTest.java">
+</file>
+<file name="/Users/miayim/Desktop/CS3500D/pa05-miabenrobert/src/test/java/cs3500/pa05/model/TaskTest.java">
+</file>
+</checkstyle>

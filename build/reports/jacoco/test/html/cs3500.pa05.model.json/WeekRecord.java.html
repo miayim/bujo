@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeekRecord.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pa05-template</a> &gt; <a href="index.source.html" class="el_package">cs3500.pa05.model.json</a> &gt; <span class="el_source">WeekRecord.java</span></div><h1>WeekRecord.java</h1><pre class="source lang-java linenums">package cs3500.pa05.model.json;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import cs3500.pa05.model.Event;
+import cs3500.pa05.model.Task;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * To represent Week in a bujo spread.
+ */
+<span class="fc" id="L12">public record WeekRecord(</span>
+    @JsonProperty(&quot;name&quot;) String name,
+    @JsonProperty(&quot;tasks&quot;) List&lt;TaskJson&gt; tasks,
+    @JsonProperty(&quot;events&quot;) List&lt;EventJson&gt; events,
+    @JsonProperty(&quot;maxEvents&quot;) int maxEvents,
+    @JsonProperty(&quot;maxTasks&quot;) int maxTasks,
+    @JsonProperty(&quot;notesAndQuotes&quot;) String notesAndQuotes,
+    @JsonProperty(&quot;password&quot;) String password
+
+) {
+
+  /**
+   * Adds a task to this list of taskJsons
+   *
+   * @param task the task to be added
+   */
+  public void addTask(Task task) {
+<span class="fc" id="L29">    TaskJson taskJson = task.toJson();</span>
+
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">    for (TaskJson t : tasks) {</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">      if (this.sameExceptCompleteness(t, taskJson)) {</span>
+<span class="fc" id="L33">        tasks.remove(t);</span>
+<span class="fc" id="L34">        tasks.add(taskJson);</span>
+<span class="fc" id="L35">        break;</span>
+      }
+<span class="fc" id="L37">    }</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">    if (!this.tasks.contains(taskJson)) {</span>
+<span class="nc" id="L39">      this.tasks.add(taskJson);</span>
+    }
+<span class="fc" id="L41">  }</span>
+
+  /**
+   * determines if two tasks have the same name, description and weekday
+   *
+   * @param orig the first task to be checked
+   * @param elem the second task to be checked
+   * @return true if the two tasks have the exact same contents, except for completeness
+   */
+  public boolean sameExceptCompleteness(TaskJson orig, TaskJson elem) {
+<span class="pc bpc" id="L51" title="2 of 4 branches missed.">    return (orig.name().equals(elem.name()) &amp;&amp; orig.description().equals(elem.description())</span>
+<span class="pc bpc" id="L52" title="1 of 4 branches missed.">        &amp;&amp; orig.weekday().equals(elem.weekday()) &amp;&amp; orig.complete() != elem.complete());</span>
+  }
+
+  /**
+   * Adds an event to this list of eventJsons
+   *
+   * @param event the event to be added
+   */
+  public void addEvent(Event event) {
+
+<span class="fc" id="L62">    EventJson eventJson = event.toJson();</span>
+
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    if (!this.events.contains(eventJson)) {</span>
+<span class="fc" id="L65">      this.events.add(eventJson);</span>
+    }
+<span class="fc" id="L67">  }</span>
+
+  /**
+   * Percentage of tasks complete.
+   *
+   * @return the int percentage of tasks complete.
+   */
+  public double percentOfTasksComplete() {
+<span class="fc" id="L75">    double numTasksComplete = 0;</span>
+<span class="fc" id="L76">    double totalTasks = 0;</span>
+
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    if (tasks.size() == 0) {</span>
+<span class="fc" id="L79">      return 0;</span>
+    } else {
+<span class="fc" id="L81">      totalTasks = tasks.size();</span>
+    }
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">    for (TaskJson taskJson : this.tasks) {</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">      if (taskJson.complete()) {</span>
+<span class="fc" id="L86">        numTasksComplete += 1;</span>
+      }
+<span class="fc" id="L88">    }</span>
+<span class="fc" id="L89">    return (numTasksComplete / totalTasks);</span>
+  }
+
+  /**
+   * produces a list of tasks that the week contains
+   *
+   * @return an ArrayList of tasks for the week
+   */
+  public List&lt;Task&gt; taskList() {
+<span class="fc" id="L98">    ArrayList&lt;Task&gt; tasks = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">    for (TaskJson task : this.tasks) {</span>
+<span class="fc" id="L100">      tasks.add(task.toTask());</span>
+<span class="fc" id="L101">    }</span>
+<span class="fc" id="L102">    return tasks;</span>
+  }
+
+
+  /**
+   * produces a list of events that the week contains
+   *
+   * @return an ArrayList of events for the week
+   */
+  public List&lt;Event&gt; eventList() {
+<span class="fc" id="L112">    ArrayList&lt;Event&gt; event = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">    for (EventJson task : this.events) {</span>
+<span class="fc" id="L114">      event.add(task.toEvent());</span>
+<span class="fc" id="L115">    }</span>
+<span class="fc" id="L116">    return event;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
